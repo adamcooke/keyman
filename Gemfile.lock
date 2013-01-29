@@ -1,3 +1,9 @@
+PATH
+  remote: .
+  specs:
+    keyman (1.0.0)
+      net-ssh (~> 2.6.3)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -7,4 +13,4 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  net-ssh
+  keyman!
