@@ -4,6 +4,10 @@ This simple little utility allows you to manage the authorized_keys files for a
 number of servers & users. It is designed to provide easy access to ensure that
 you can revoke & grant access to appropriate people on multiple servers.
 
+**Please Note: this utility is somewhat un-tested and not currently used in any 
+production environment. Your mileage may vary and we recommend testing in a 
+non-production environment prior to use.**
+
 ## Installation
 
 To install, just install the Rubygem.
@@ -71,6 +75,6 @@ $ keyman push database01.myapplication.com
 There are other commands available within the app, you can view these by 
 viewing the inline help.
 
-```ruby
+```bash
 $ keyman help
 ```
