@@ -1,0 +1,39 @@
+#!/usr/bin/env ruby
+require 'keyman'
+begin
+  
+  # Convert command line arguments into the appropriate ruby objects
+  args = ARGV.dup
+  final_args = []
+  options = {}
+  until args.empty?
+    arg = args.shift
+    if arg =~ /\A\-/
+      options[arg.gsub(/\A\-+/, '').to_sym] = args.shift
+    else
+      final_args << arg
+    end
+  end
+  
+  command = final_args.first
+  case command
+  when 'help', nil
+    puts "This is the Keyman utility. You can use this to execute your key manifest"
+    puts "commands. In order to use this, you must be currently within your"
+    puts "manifest directory."
+    puts
+    puts "    keys {server} {user}  - displays the authorized keys file for a server's user"
+    puts "    push                  - pushes the latest files to all servers"
+    puts "    push {server}         - pushes the latest file to the specified server"
+    puts "    servers               - displays a list of all servers"
+    puts "    permissions {server}  - displays the permissions for given server"
+    puts "    users                 - displays a list of all users & groups"
+    puts
+  else
+    Keyman.run(final_args, options)
+  end
+  
+rescue Keyman::Error => e
+  puts "\e[31m" + e.message + "\e[0m"
+  Process.exit(1)
+end
