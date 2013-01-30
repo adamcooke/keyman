@@ -5,7 +5,7 @@ require 'keyman/user'
 require 'keyman/group'
 require 'keyman/server'
 require 'keyman/server_group'
-require 'keyman/keyfile'
+require 'keyman/manifest'
 
 module Keyman
   
@@ -16,6 +16,9 @@ module Keyman
   class Error < StandardError; end
   
   class << self
+    # Stores the actual manifest object
+    attr_accessor :manifest
+    
     # Storage for the manifest directory to work with
     attr_accessor :manifest_dir
     
@@ -43,26 +46,6 @@ module Keyman
       end
     end
 
-    # Load a manifest from the given folder
-    def load(directory)
-      self.users          = []
-      self.groups         = []
-      self.servers        = []
-      self.server_groups  = []
-      if File.directory?(directory)
-        ['./users.km', Dir[File.join(directory, '*.km')]].flatten.uniq.each do |file|
-          path = File.join(directory, file)
-          if File.exist?(path)
-            Keyman::Keyfile.class_eval(File.read(path)) 
-          else
-            raise Error, "No '#{file}' was found in your manifest directory. Abandoning..."
-          end
-        end
-      else
-        raise Error, "No folder found at '#{directory}'"
-      end
-    end
-    
     # Return a user or a group for the given name
     def user_or_group_for(name)
       self.users.select { |u| u.name == name.to_sym }.first || self.groups.select { |u| u.name == name.to_sym }.first
@@ -70,7 +53,7 @@ module Keyman
     
     # Execute a CLI command
     def run(args, options = {})
-      load('./')
+      Manifest.load
       case args.first
       when 'keys'
         if server = self.servers.select { |s| s.host == args[1] }.first
