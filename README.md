@@ -94,3 +94,13 @@ viewing the inline help.
 ```bash
 $ keyman help
 ```
+
+## Storing your manifest directory
+
+It is recommended to store your manifest directory in a Git repository. Once in a 
+repository, you will be required to ensure that your local branch is always the same
+as your remote branch before you can push to a server. This ensures that you cannot
+overwrite someone elses changes should you forget to pull before pushing. 
+
+This behaviour is automatic and currently non-optional when there is a .git directory
+in your manifest.
