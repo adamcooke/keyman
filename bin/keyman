@@ -30,6 +30,7 @@ begin
     puts "  users                 - displays a list of all users & groups"
     puts
   else
+    puts "\e[37mUsing manifest from #{Keyman.manifest_dir}\e[0m"
     Keyman.run(final_args, options)
   end
   

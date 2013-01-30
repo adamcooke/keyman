@@ -1,3 +1,4 @@
+require 'yaml'
 require 'net/ssh'
 
 require 'keyman/user'
@@ -15,12 +16,32 @@ module Keyman
   class Error < StandardError; end
   
   class << self
+    # Storage for the manifest directory to work with
+    attr_accessor :manifest_dir
+    
     # Storage for all the users, groups & servers which are loaded
     # from the manifest
     attr_accessor :users
     attr_accessor :groups
     attr_accessor :servers
     attr_accessor :server_groups
+    
+    # Sets the default manifest_dir dir
+    def manifest_dir
+      @manifest_dir || self.config[:manifest_dir] || "./"
+    end
+    
+    # Sets the configuration options
+    def config
+      @config ||= begin
+        config_dir = File.join(ENV['HOME'], '.keyman')
+        if File.exist?(config_dir)
+          YAML.load_file(config_dir)
+        else
+          {}
+        end
+      end
+    end
 
     # Load a manifest from the given folder
     def load(directory)
