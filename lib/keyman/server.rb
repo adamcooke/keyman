@@ -1,7 +1,7 @@
 module Keyman
   class Server
     
-    attr_accessor :host, :users, :location
+    attr_accessor :host, :users, :location, :group
     
     def initialize
       @users = {}
@@ -15,6 +15,17 @@ module Keyman
       s
     end
     
+    # Adds a new server based on it's name and location
+    def self.add_by_name(host, options = {})
+      s = self.new
+      s.host = host
+      s.location = options[:location]
+      s.users = options[:users]
+      s.group = options[:group]
+      Keyman.servers << s
+      s
+    end
+    
     # Returns or sets the hostname of the server which should be used when connecting
     # and identifying this server
     def host(host = nil)
@@ -24,6 +35,7 @@ module Keyman
     # Sets a user on the server along with the access objects which should be
     # granted access
     def user(name, *access_objects)
+      access_objects.each { |ao| raise Error, "!! Invalid access object '#{ao}' on '#{self.host}'" unless Keyman.user_or_group_for(ao) }
       @users[name] = access_objects
     end
     
@@ -36,9 +48,12 @@ module Keyman
     # all objects from within the server
     def authorized_users(username)
       @users[username].map do |k|
-        obj = Keyman.user_or_group_for(k)
-        obj.is_a?(Group) ? obj.users : obj
-      end.flatten.uniq
+        if obj = Keyman.user_or_group_for(k)
+          obj.is_a?(Group) ? obj.users : obj
+        else
+          nil
+        end
+      end.flatten.compact.uniq
     end
     
     # Returns a full string output for the authorized_keys file. Passes

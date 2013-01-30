@@ -3,13 +3,14 @@ require 'net/ssh'
 require 'keyman/user'
 require 'keyman/group'
 require 'keyman/server'
+require 'keyman/server_group'
 require 'keyman/keyfile'
 
 
 module Keyman
   
   # The current version of the keyman system
-  VERSION = '1.0.0'
+  VERSION = '1.1.0'
   
   # An error which will be raised
   class Error < StandardError; end
@@ -20,14 +21,16 @@ module Keyman
     attr_accessor :users
     attr_accessor :groups
     attr_accessor :servers
+    attr_accessor :server_groups
 
     # Load a manifest from the given folder
     def load(directory)
-      self.users    = []
-      self.groups   = []
-      self.servers  = []
+      self.users          = []
+      self.groups         = []
+      self.servers        = []
+      self.server_groups  = []
       if File.directory?(directory)
-        ['groups.rb', 'servers.rb'].each do |file|
+        ['users.km', Dir[File.join(directory, '*.km')]].flatten.uniq.each do |file|
           path = File.join(directory, file)
           if File.exist?(path)
             Keyman::Keyfile.class_eval(File.read(path)) 
@@ -84,9 +87,22 @@ module Keyman
           self.servers.each(&:push!)
         end
       when 'servers'
-        self.servers.each do |server|
-          puts " * " + server.host
+        self.server_groups.sort_by(&:name).each do |group|
+          puts '-' * 80
+          puts group.name.to_s
+          puts '-' * 80
+          group.servers.each do |s|
+            puts " * #{s.host}"
+          end
         end
+        
+        puts '-' * 80
+        puts 'no group'
+        puts '-' * 80
+        self.servers.select { |s| s.group.nil?}.each do |s|
+          puts " * #{s.host}"
+        end
+        
       when 'users'
         self.groups.each do |group|
           puts "-" * 80

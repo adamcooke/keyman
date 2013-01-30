@@ -18,11 +18,11 @@ $ gem install keyman
 
 Once installed, you will need to create yourself a **manifest directory**. This
 directory will contain all your configuration for your key manager. You should
-create an empty directory and add two files, a `servers.rb` and a `users.rb` file.
+create an empty directory and add two files, a `servers.km` and a `users.km` file.
 
 ## Example Users/Groups Manifest File
 
-The below file is an example of a `users.rb` manifest file.
+The below file is an example of a `users.km` manifest file.
 
 ```ruby
 group :admins do
@@ -39,7 +39,7 @@ end
 
 ## Example Server Manifest File
 
-The below file is an example of a `servers.rb` file.
+The below file is an example of a `servers.km` file.
 
 ```ruby
 # An example configuration for a server where all admin users have
@@ -56,7 +56,21 @@ server do
   host 'database01.myapplication.com'
   user 'root', :admins, :dan
 end
+
+# An example of a group of servers each with the same permissions. These 
+# will create servers with the same 
+server_group :load_balancers do
+  host 'lb01.myapplication.com'
+  host 'lb02.myapplication.com'
+  host 'lb03.myapplication.com'
+  user 'root', :admins
+  user 'app', :admins, :staff
+end
 ```
+
+You may add as many `.km` files as you wish to to your manifest directory and they
+will be loaded. However, all **users** should be defined in `users.km` and nowhere 
+else.
 
 ## Pushing files to servers
 

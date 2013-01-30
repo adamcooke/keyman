@@ -13,6 +13,10 @@ module Keyman
       def user(username, key)
         User.add(username, key)
       end
+      
+      def server_group(name, &block)
+        ServerGroup.add(name, &block)
+      end
     end
     
   end
