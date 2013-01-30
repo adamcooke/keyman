@@ -79,6 +79,19 @@ module Keyman
           raise Error, "No server found with the hostname '#{args[1]}'"
         end
       when 'push'
+        
+        if self.manifest.uses_git?
+          unless self.manifest.clean?
+            raise Error, "Your manifest is not clean. You should push to your repository before pushing."
+          end
+          
+          unless self.manifest.latest_commit?
+            raise Error, "The remote server has a more up-to-date manifest. Pull first."
+          end
+          
+          puts "Repository check passed!"
+        end
+        
         if args[1]
           server = self.servers.select { |s| s.host == args[1] }.first
           server = self.server_groups.select { |s| s.name == args[1].to_sym }.first if server.nil?
@@ -118,6 +131,27 @@ module Keyman
             puts "\e[37m#{u.key}\e[0m"
           end
         end
+        
+      when 'status'
+        if Keyman.manifest.uses_git?
+          puts "Your manifest is using a remote git repository."
+          if Keyman.manifest.clean?
+            puts " * Your working copy is clean"
+          else
+            puts " * You have an un-clean working copy. You must commit before pushing."
+          end
+          
+          if Keyman.manifest.latest_commit?
+            puts " * You have the latest commit fetched."
+          else
+            puts " * There is a newer version of this repo on the server."
+          end
+        else
+          puts "Your manifest does not use git. There is no status to display."
+        end
+        
+      else
+        raise Error, "Invalid command '#{args.first}'"
       end
     end
   end

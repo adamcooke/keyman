@@ -50,17 +50,28 @@ module Keyman
     
     # Does this manifest directory use git?
     def uses_git?
-      File.directory?(File.join(Keyman.manifest_dir, '.git'))
+      File.directory?(File.join(@directory, '.git'))
     end
     
     # Is the current repo clean?
     def clean?
-      return true
+      `cd #{@directory} && git status`.chomp.include?('nothing to commit')
     end
     
     # Does the latest commit on the current branch match the remote brandh
     def latest_commit?
-      return true
+      local = `cd #{@directory} && git log --pretty=%H`.chomp
+      if `cd #{@directory} && git status`.chomp.match(/On branch (.*)\n/)
+        branch = $1
+      else
+        raise Error, "Unable to determine the local repository branch."
+      end
+      remote = `cd #{@directory} && git ls-remote 2> /dev/null | grep refs/heads/#{branch} `.chomp.split(/\s+/).first
+      if local.length == 40 && remote.length == 40
+        local == remote
+      else
+        raise Error, "Unable to determine local & remote commits"
+      end
     end
 
   end
