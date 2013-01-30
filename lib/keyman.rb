@@ -30,7 +30,6 @@ module Keyman
       self.server_groups  = []
       if File.directory?(directory)
         ['./users.km', Dir[File.join(directory, '*.km')]].flatten.uniq.each do |file|
-          puts file
           path = File.join(directory, file)
           if File.exist?(path)
             Keyman::Keyfile.class_eval(File.read(path)) 
@@ -77,9 +76,12 @@ module Keyman
         end
       when 'push'
         if args[1]
-          # push single server
-          if server = self.servers.select { |s| s.host == args[1] }.first
+          server = self.servers.select { |s| s.host == args[1] }.first
+          server = self.server_groups.select { |s| s.name == args[1].to_sym }.first if server.nil?
+          if server.is_a?(Keyman::Server)
             server.push!
+          elsif server.is_a?(Keyman::ServerGroup)
+            server.servers.each(&:push!)
           else
             raise Error, "No server found with the hostname '#{args[1]}'"
           end
@@ -95,7 +97,6 @@ module Keyman
             puts " * #{s.host}"
           end
         end
-        
         puts '-' * 80
         puts 'no group'
         puts '-' * 80
