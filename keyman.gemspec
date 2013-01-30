@@ -16,5 +16,6 @@ Gem::Specification.new do |s|
   s.email = "adam@atechmedia.com"
   s.homepage = "http://atechmedia.com"
   s.add_dependency('net-ssh', '~> 2.6.3')
+  s.add_dependency('highline')
 end
 

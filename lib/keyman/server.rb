@@ -74,20 +74,35 @@ module Keyman
     # configured here. This will not succeed if the current user does not
     # already have a key on the server.
     def push!
+
+      passwords_to_try = (Keyman.password_cache ||= [nil]).dup
+
       @users.each do |user, objects|
         begin
-          Timeout.timeout(10) do |t|
-            Net::SSH.start(self.host, user) do |ssh|
-              ssh.exec!("mkdir -p ~/.ssh")
-              file = authorized_keys(user).gsub("\n", "\\n").gsub("\t", "\\t")
-              ssh.exec!("echo -e '#{file}' > ~/.ssh/authorized_keys")
+          passwords_to_try.each do |password|
+            Timeout.timeout(10) do |t|
+              Net::SSH.start(self.host, user, :password => password) do |ssh|
+                ssh.exec!("mkdir -p ~/.ssh")
+                file = authorized_keys(user).gsub("\n", "\\n").gsub("\t", "\\t")
+                ssh.exec!("echo -e '#{file}' > ~/.ssh/authorized_keys")
+              end
+              Keyman.password_cache << password if password
             end
           end
           puts "\e[32mPushed authorized_keys to #{user}@#{self.host}\e[0m"
+        rescue Net::SSH::AuthenticationFailed
+          puts "\e[35mAuthorization failed on to #{user}@#{self.host}.\e[0m"
+          passwords_to_try.shift
+          password = HighLine.ask("Enter password: ") { |q| q.echo = "*" }
+          if password.length > 0
+            passwords_to_try << password
+            retry
+          end
         rescue Timeout::Error
           puts "\e[31mTimed out while uploading authorized_keys to #{user}@#{self.host}\e[0m"
-        rescue
-          puts "\e[31mFailed to upload authorized_keys to #{user}@#{self.host}\e[0m"
+        rescue => e
+          puts "\e[31mFailed to upload authorized_keys to #{user}@#{self.host} (#{e.class})\e[0m"
+          puts e.message
         end
       end
     end

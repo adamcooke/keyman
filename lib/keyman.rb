@@ -1,5 +1,6 @@
 require 'yaml'
 require 'net/ssh'
+require 'highline/import'
 
 require 'keyman/user'
 require 'keyman/group'
@@ -28,6 +29,9 @@ module Keyman
     attr_accessor :groups
     attr_accessor :servers
     attr_accessor :server_groups
+    
+    # Storage for a password cache to use within the current session
+    attr_accessor :password_cache
     
     # Sets the default manifest_dir dir
     def manifest_dir
@@ -89,7 +93,7 @@ module Keyman
             raise Error, "The remote server has a more up-to-date manifest. Pull first."
           end
           
-          puts "Repository check passed!"
+          puts "\e[32mRepository check passed!\e[0m"
         end
         
         if args[1]

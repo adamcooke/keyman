@@ -1,12 +1,14 @@
 PATH
   remote: .
   specs:
-    keyman (1.0.0)
+    keyman (1.1.0)
+      highline
       net-ssh (~> 2.6.3)
 
 GEM
   remote: https://rubygems.org/
   specs:
+    highline (1.6.15)
     net-ssh (2.6.3)
 
 PLATFORMS
