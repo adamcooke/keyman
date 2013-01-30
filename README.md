@@ -85,7 +85,7 @@ $ keyman push
 # to push configuration to a specific server
 $ keyman push database01.myapplication.com
 # to push configuration to a server group
-$ keyman push load_banacers
+$ keyman push load_balancers
 ```
 
 There are other commands available within the app, you can view these by 
