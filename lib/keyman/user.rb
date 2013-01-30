@@ -9,6 +9,10 @@ module Keyman
       if existing
         existing
       else
+        if existing = Keyman.user_or_group_for(name)
+          raise Error, "#{existing.class.to_s.split('::').last} already exists for '#{name}' - cannot define user with this name."
+        end
+        
         u = self.new
         u.name = name.to_sym
         u.key = key

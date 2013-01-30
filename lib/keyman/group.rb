@@ -9,6 +9,11 @@ module Keyman
     
     # Add a new group with the given name
     def self.add(name, &block)
+      if existing = Keyman.user_or_group_for(name)
+        puts existing.inspect
+        raise Error, "#{existing.class.to_s.split('::').last} already exists for '#{name}' - cannot define user with this name."
+      end
+      
       g = Group.new
       g.name = name
       g.instance_eval(&block)

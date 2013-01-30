@@ -6,7 +6,6 @@ require 'keyman/server'
 require 'keyman/server_group'
 require 'keyman/keyfile'
 
-
 module Keyman
   
   # The current version of the keyman system
@@ -30,7 +29,8 @@ module Keyman
       self.servers        = []
       self.server_groups  = []
       if File.directory?(directory)
-        ['users.km', Dir[File.join(directory, '*.km')]].flatten.uniq.each do |file|
+        ['./users.km', Dir[File.join(directory, '*.km')]].flatten.uniq.each do |file|
+          puts file
           path = File.join(directory, file)
           if File.exist?(path)
             Keyman::Keyfile.class_eval(File.read(path)) 
