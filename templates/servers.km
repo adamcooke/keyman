@@ -1,0 +1,22 @@
+# Example Keyman server configuration file
+# This file should contain all your server & server group definitions which should
+# be used within this manifest.
+#
+# You may also create other files with the extension .km within your manifest directory.
+# These must only contain server/server group definitions.
+#
+# server_group :app_servers do
+#   server 'app01.myapplication.com'
+#   server 'app02.myapplication.com'
+#   server 'app03.myapplication.com'
+#
+#   user 'root', :admins
+#   user 'app', :admins, :staff
+# end
+#
+# server do
+#   host 'db-a.myapplication.com'
+#   location :london
+#   user 'root', :admins
+#   user 'db', :admins, :database_admins
+# end

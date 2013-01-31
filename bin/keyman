@@ -22,6 +22,7 @@ begin
     puts "commands. In order to use this, you must be currently within your"
     puts "manifest directory."
     puts
+    puts "  init {path}           - creates a new manifest directory"
     puts "  keys {server} {user}  - displays the authorized keys file for a server's user"
     puts "  push                  - pushes the latest files to all servers"
     puts "  push {server}         - pushes the latest file to the specified server"
@@ -29,6 +30,21 @@ begin
     puts "  permissions {server}  - displays the permissions for given server"
     puts "  users                 - displays a list of all users & groups"
     puts
+  when 'init'
+    require 'fileutils'
+    if path = final_args[1]
+      if File.exist?(path)
+        raise Keyman::Error, "A file/directory already exists at #{path}"
+      else
+        FileUtils.mkdir(path)
+        template_root = File.expand_path(File.join('..', '..', 'templates'), __FILE__)
+        File.open(File.join(path, 'users.km'), 'w') { |f| f.write(File.read(File.join(template_root, 'users.km')))}
+        File.open(File.join(path, 'servers.km'), 'w') { |f| f.write(File.read(File.join(template_root, 'servers.km')))}
+        puts "\e[32mKeyman manifest directory created at #{path} successfully.\e[0m"
+      end
+    else
+      raise Keyman::Error, "You should pass a directory name to the init command to create a new manifest directory."
+    end
   else
     puts "\e[37mUsing manifest from #{Keyman.manifest_dir}\e[0m"
     Keyman.run(final_args, options)

@@ -13,8 +13,15 @@ $ gem install keyman
 ```
 
 Once installed, you will need to create yourself a **manifest directory**. This
-directory will contain all your configuration for your key manager. You should
-create an empty directory and add two files, a `servers.km` and a `users.km` file.
+directory will contain all your configuration for your key manager. You can easily
+do this using the `init` command:
+
+```bash
+$ keyman init path/to/manifest
+```
+
+This will create a directory containing two files, a `users.km` and a `servers.km`.
+These files contain examples and comments which should help you get started.
 
 ## Example Users/Groups Manifest File
 

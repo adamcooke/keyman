@@ -1,0 +1,8 @@
+# Example Keyman user/group configuration file
+# This file should contain all your user & group definitions which should
+# be used within this manifest.
+#
+# group :admins do
+#   user :adam, 'ssh-rsa AAAAA=='
+#   user :dave, 'ssh-rsa BBBBB=='
+# end
