@@ -34,6 +34,8 @@ begin
     Keyman.run(final_args, options)
   end
   
+rescue SystemExit, Interrupt
+  Process.exit(0)
 rescue Keyman::Error => e
   puts "\e[31m" + e.message + "\e[0m"
   Process.exit(1)

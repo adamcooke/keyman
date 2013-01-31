@@ -74,9 +74,7 @@ module Keyman
     # configured here. This will not succeed if the current user does not
     # already have a key on the server.
     def push!
-
       passwords_to_try = (Keyman.password_cache ||= [nil]).dup
-
       @users.each do |user, objects|
         begin
           passwords_to_try.each do |password|
@@ -91,11 +89,17 @@ module Keyman
           end
           puts "\e[32mPushed authorized_keys to #{user}@#{self.host}\e[0m"
         rescue Net::SSH::AuthenticationFailed
-          puts "\e[35mAuthorization failed on to #{user}@#{self.host}.\e[0m"
           passwords_to_try.shift
-          password = HighLine.ask("Enter password: ") { |q| q.echo = "*" }
-          if password.length > 0
-            passwords_to_try << password
+          if passwords_to_try.empty?
+            puts "\e[35mAuthorization failed on to #{user}@#{self.host}.\e[0m"
+            password = HighLine.ask("Enter password: ") { |q| q.echo = "*" }
+            if password.length > 0
+              passwords_to_try << password
+              retry
+            else
+              puts "\e[37mSkipping #{user}@#{self.host}\e[0m"
+            end
+          else
             retry
           end
         rescue Timeout::Error

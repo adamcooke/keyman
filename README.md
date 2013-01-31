@@ -4,10 +4,6 @@ This simple little utility allows you to manage the authorized_keys files for a
 number of servers & users. It is designed to provide easy access to ensure that
 you can revoke & grant access to appropriate people on multiple servers.
 
-**Please Note: this utility is somewhat un-tested and not currently used in any 
-production environment. Your mileage may vary and we recommend testing in a 
-non-production environment prior to use.**
-
 ## Installation
 
 To install, just install the Rubygem.
@@ -74,9 +70,12 @@ else.
 
 ## Pushing files to servers
 
-In order to push files to the server, you must already have YOUR key on the
-machine in order to authenticate. If you do not, you will not have access
-and will therefore be unable to push configuration.
+In order to push your authorized_keys files to your servers, keyman must be able
+to authenticate. In the first instance, we will attempt to use your local SSH keys
+to do this. If we cannot authenticate with these, you will be prompted for the password
+when you attempt to push. This password, if accepted, will then be cached for your
+"session" and attempted for any subsequent servers which cannot be authenticated with
+your SSH keys.
 
 ```bash
 $ cd path/to/manifest

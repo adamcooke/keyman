@@ -35,7 +35,7 @@ module Keyman
     
     # Sets the default manifest_dir dir
     def manifest_dir
-      @manifest_dir || self.config[:manifest_dir] || "./"
+      @manifest_dir || self.config['manifest_dir'] || "./"
     end
     
     # Sets the configuration options

@@ -10,9 +10,8 @@ module Keyman
       manifest       = self.new(directory)
       if File.directory?(directory)
         [File.join(directory, 'users.km'), Dir[File.join(directory, '*.km')]].flatten.uniq.compact.each do |file|
-          path = File.join(directory, file)
-          if File.exist?(path)
-            manifest.instance_eval(File.read(path))
+          if File.exist?(file)
+            manifest.instance_eval(File.read(file))
           else
             raise Error, "No '#{file}' was found in your manifest directory. Abandoning..."
           end
@@ -60,7 +59,7 @@ module Keyman
     
     # Does the latest commit on the current branch match the remote brandh
     def latest_commit?
-      local = `cd #{@directory} && git log --pretty=%H`.chomp
+      local = `cd #{@directory} && git log --pretty=%H -n 1`.chomp
       if `cd #{@directory} && git status`.chomp.match(/On branch (.*)\n/)
         branch = $1
       else
