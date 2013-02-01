@@ -11,7 +11,7 @@ require 'keyman/manifest'
 module Keyman
   
   # The current version of the keyman system
-  VERSION = '1.1.0'
+  VERSION = '1.1.1'
   
   # An error which will be raised
   class Error < StandardError; end
